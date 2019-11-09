@@ -35,10 +35,12 @@
                 $http
             ){
                 $scope.valores = {};
-                $scope.results = {}
+                $scope.results = {};
+
+                $scope.showMessage = false;
 
                 $scope.calcular = function(){
-                    $http.post("exercicio1.php", $scope.valores)
+                    $http.post("src/calculadora.php", $scope.valores)
                         .success(function(data) {
                             console.log(data);
 
@@ -48,16 +50,21 @@
                                 $scope.results.x2 = data.x2;
                                 console.log(JSON.stringify(data));
                             } else {
-                                alert("Impossivel calcular.");
+                                $scope.showMessage = true;
                             }
-
-
                         })
                 };
+
+                $scope.removeMessage = function() {
+                    $scope.showMessage = false;
+                };
+
                 $scope.limpar = function() {
                     $scope.valores = {};
                     $scope.results = {};
-                }
+                    $scope.removeMessage();
+                };
+
 
             }]);
     </script>
@@ -82,21 +89,21 @@
                             <div class="card border border-primary">
                                 <div class="card-body">
                                     <h5 class="card-title">Calculadora</h5>
-                                    <form action="/categorias" method="POST">
+                                    <form method="POST">
                                         <div class="form-group">
                                             <label for="valor_a">Valor A:</label>
-                                            <input type="text" class="form-control" name="valor_a" id="valor_a" placeholder="Valor A" ng-model="valor_a">
+                                            <input type="number" class="form-control" name="valor_a" id="valor_a" placeholder="A" ng-model="valores.valor_a" ng-change="removeMessage()">
                                             <label for="valor_b">Valor B:</label>
-                                            <input type="text" class="form-control" name="valor_b" id="valor_b" placeholder="Valor B" ng-model="valor_b">
+                                            <input type="number" class="form-control" name="valor_b" id="valor_b" placeholder="B" ng-model="valores.valor_b" ng-change="removeMessage()">
                                             <label for="valor_c">Valor C:</label>
-                                            <input type="text" class="form-control" name="valor_c" id="valor_c" placeholder="Valor C" ng-model="valor_c">
+                                            <input type="number" class="form-control" name="valor_c" id="valor_c" placeholder="C" ng-model="valores.valor_c" ng-change="removeMessage()">
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-sm">Calcular</button>
-                                        <button type="cancel" class="btn btn-danger btn-sm">Cancelar</button>
+                                        <button type="button" class="btn btn-primary btn-sm" ng-click="calcular()" >Calcular</button>
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="limpar()">Cancelar</button>
                                     </form>
                                 </div>
                             </div>
-                            <div class="card border border-primary">
+                            <div class="card border border-primary" style="width: 50rem;">
                                 <div class="card-body">
                                     <h5 class="card-title">Resultado</h5>
                                     <div class="col-sm-12">
@@ -117,6 +124,10 @@
 
                                     <div class="col-sm-12" ng-if="valores.valor_a && valores.valor_b && valores.valor_c">
                                         X2 = {{results.x2}}
+                                    </div>
+
+                                    <div class="alert alert-danger" role="alert" ng-if="showMessage" ng-blur="removeMessage()" autofocus>
+                                        Desculpe não conseguimos calcular o X caso delta seja negativo!
                                     </div>
                                 </div>
                             </div>
