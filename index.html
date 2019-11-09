@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>Equação do segundo grau</title>
+    <title>Equação do Segundo Grau</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
@@ -13,6 +13,9 @@
 
         .navbar {
             margin-bottom: 20px;
+        }
+        .alert {
+            margin-top: 10px;
         }
         label {
             margin-bottom: 10px;
@@ -38,6 +41,7 @@
                 $scope.results = {};
 
                 $scope.showMessage = false;
+                $scope.toaster = false;
 
                 $scope.calcular = function(){
                     $http.post("src/calculadora.php", $scope.valores)
@@ -57,6 +61,14 @@
 
                 $scope.removeMessage = function() {
                     $scope.showMessage = false;
+                    $scope.results = {};
+
+                    if ($scope.valores.valor_a == 0) {
+                        $scope.toaster = true;
+                        $scope.msg = "O valor de A não pode ser igual a 0.";
+                    } else {
+                        $scope.toaster = false;
+                    }
                 };
 
                 $scope.limpar = function() {
@@ -77,7 +89,7 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="/">Equação do segundo grau<span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="/">Equação do Segundo Grau<span class="sr-only">(current)</span></a>
                         </li>
                     </ul>
                 </div>
@@ -92,15 +104,18 @@
                                     <form method="POST">
                                         <div class="form-group">
                                             <label for="valor_a">Valor A:</label>
-                                            <input type="number" class="form-control" name="valor_a" id="valor_a" placeholder="A" ng-model="valores.valor_a" ng-change="removeMessage()">
+                                            <input type="text" class="form-control" name="valor_a" id="valor_a" placeholder="A" ng-model="valores.valor_a" ng-change="removeMessage()">
                                             <label for="valor_b">Valor B:</label>
-                                            <input type="number" class="form-control" name="valor_b" id="valor_b" placeholder="B" ng-model="valores.valor_b" ng-change="removeMessage()">
+                                            <input type="text" class="form-control" name="valor_b" id="valor_b" placeholder="B" ng-model="valores.valor_b" ng-change="removeMessage()">
                                             <label for="valor_c">Valor C:</label>
-                                            <input type="number" class="form-control" name="valor_c" id="valor_c" placeholder="C" ng-model="valores.valor_c" ng-change="removeMessage()">
+                                            <input type="text" class="form-control" name="valor_c" id="valor_c" placeholder="C" ng-model="valores.valor_c" ng-change="removeMessage()">
                                         </div>
-                                        <button type="button" class="btn btn-primary btn-sm" ng-click="calcular()" >Calcular</button>
+                                        <button type="button" class="btn btn-primary btn-sm" ng-click="calcular()" ng-disabled="toaster">Calcular</button>
                                         <button type="button" class="btn btn-danger btn-sm" ng-click="limpar()">Cancelar</button>
                                     </form>
+                                    <div class="alert alert-danger" role="alert" ng-if="toaster" ng-blur="removeMessage()" autofocus>
+                                       {{msg}}
+                                    </div>
                                 </div>
                             </div>
                             <div class="card border border-primary" style="width: 50rem;">
@@ -127,7 +142,7 @@
                                     </div>
 
                                     <div class="alert alert-danger" role="alert" ng-if="showMessage" ng-blur="removeMessage()" autofocus>
-                                        Desculpe não conseguimos calcular o X caso delta seja negativo!
+                                        Desculpe. Não existe no conjunto dos números reais a raiz quadrada de um número negativo.
                                     </div>
                                 </div>
                             </div>

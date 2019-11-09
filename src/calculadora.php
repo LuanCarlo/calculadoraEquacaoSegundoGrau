@@ -7,13 +7,14 @@
     $b = floatval ($request->valor_b);
     $c = floatval ($request->valor_c);
 
-    $delta = ($b * $b) - ((4 * $a) * $c);
+    try {
 
-    $x1 = (-$b + sqrt($delta)) / (2 * $a);
 
-    $x2 = (-$b - sqrt($delta)) / (2 * $a);
+        $delta = ($b * $b) - ((4 * $a) * $c);
 
-    if ($x1 != 'NAN' and $x2 != 'NAN') {
+        $x1 = (-$b + sqrt($delta)) / (2 * $a);
+
+        $x2 = (-$b - sqrt($delta)) / (2 * $a);
 
         $results = [
             "success" => true,
@@ -23,14 +24,8 @@
         ];
         $results = json_encode($results);
 
-    } else {
-
-        $results = [
-            "success" => false,
-            "delta" => $delta,
-        ];
-
-        $results = json_encode($results);
+    } catch(Exception $e) {
+        echo 'Message: ' .$e->getMessage();
     }
 
     echo $results;
