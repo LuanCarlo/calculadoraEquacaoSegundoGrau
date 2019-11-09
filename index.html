@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html  lang="pt-br" ng-app="mainApp">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Equação do segundo grau</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+        label {
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="assets/js/angular.min.js"> </script>
+
+    <script>
+        var app = angular.module('mainApp',[]);
+        app.controller('ExercicioCtrl',[
+            '$scope',
+            '$http',
+            function(
+                $scope,
+                $http
+            ){
+                $scope.valores = {};
+                $scope.results = {}
+
+                $scope.calcular = function(){
+                    $http.post("exercicio1.php", $scope.valores)
+                        .success(function(data) {
+                            console.log(data);
+
+                            if (data != "" && data != null) {
+                                $scope.results.delta = data.delta;
+                                $scope.results.x1 = data.x1;
+                                $scope.results.x2 = data.x2;
+                                console.log(JSON.stringify(data));
+                            } else {
+                                alert("Impossivel calcular.");
+                            }
+
+
+                        })
+                };
+                $scope.limpar = function() {
+                    $scope.valores = {};
+                    $scope.results = {};
+                }
+
+            }]);
+    </script>
+</head>
+<body>
+
+    <div ng-controller="ExercicioCtrl">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/">Equação do segundo grau<span class="sr-only">(current)</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <main role="main">
+                <div class="jumbotron bg-light border border-secondary">
+                    <div class="row">
+                        <div class="card-deck">
+                            <div class="card border border-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Calculadora</h5>
+                                    <form action="/categorias" method="POST">
+                                        <div class="form-group">
+                                            <label for="valor_a">Valor A:</label>
+                                            <input type="text" class="form-control" name="valor_a" id="valor_a" placeholder="Valor A" ng-model="valor_a">
+                                            <label for="valor_b">Valor B:</label>
+                                            <input type="text" class="form-control" name="valor_b" id="valor_b" placeholder="Valor B" ng-model="valor_b">
+                                            <label for="valor_c">Valor C:</label>
+                                            <input type="text" class="form-control" name="valor_c" id="valor_c" placeholder="Valor C" ng-model="valor_c">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm">Calcular</button>
+                                        <button type="cancel" class="btn btn-danger btn-sm">Cancelar</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="card border border-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Resultado</h5>
+                                    <div class="col-sm-12">
+                                        &Delta; = {{valores.valor_b || 'B'}}² - 4 ({{valores.valor_a || 'A'}} * {{valores.valor_c || 'C'}})
+                                    </div>
+                                    <div class="col-sm-12" ng-if="valores.valor_a && valores.valor_b && valores.valor_c">
+                                        &Delta; = {{valores.valor_b * valores.valor_b}} <span ng-if="valores.valor_a < 0 || valores.valor_c < 0 "> + </span>
+                                        {{ -4 * (valores.valor_a * valores.valor_c)}}
+                                    </div>
+
+                                    <div class="col-sm-12" ng-if="valores.valor_a && valores.valor_b && valores.valor_c">
+                                        &Delta; = {{(valores.valor_b * valores.valor_b) -4 * (valores.valor_a * valores.valor_c)}}
+                                    </div>
+
+                                    <div class="col-sm-12" ng-if="valores.valor_a && valores.valor_b && valores.valor_c">
+                                        X1 = {{results.x1}}
+                                    </div>
+
+                                    <div class="col-sm-12" ng-if="valores.valor_a && valores.valor_b && valores.valor_c">
+                                        X2 = {{results.x2}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>
